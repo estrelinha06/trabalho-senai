@@ -1,11 +1,337 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SENAI - Almoxarifado Digital</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="stylehome.css">
 </head>
 <body>
-    hbnubygy
+  <!-- HEADER -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="logo">
+        <span class="logo-mark"><i class="fa-solid fa-tower-broadcast"></i></span>
+        <span class="logo-text">SENAI</span>
+      </div>
+      <h1 class="brand-title">Almoxarifado Digital</h1>
+    </div>
+
+    <div class="topbar-right">
+      <div class="welcome">
+        <p class="welcome-line">Bem-vindo,</p>
+    
+      </div>
+    
+      <div class="search-box">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" placeholder="Pesquisar itens..." />
+      </div>
+      <button class="bell-btn" aria-label="Notificações">
+        <i class="fa-regular fa-bell"></i>
+        <span class="bell-dot"></span>
+      </button>
+      <button class="logout-btn">Logout</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <nav>
+        <a href="#" class="nav-item active"><i class="fa-solid fa-house"></i><span>Homepage</span></a>
+        <a href="#" class="nav-item"><i class="fa-solid fa-table-cells-large"></i><span>Panel</span></a>
+        <a href="#" class="nav-item"><i class="fa-regular fa-calendar"></i><span>Status</span></a>
+        <a href="#" class="nav-item"><i class="fa-regular fa-bell"></i><span>Notificações</span></a>
+        <a href="#" class="nav-item"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></a>
+      </nav>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+      <div class="main-header">
+        <h2 class="page-title">Painel de Controle do Almoxarifado</h2>
+        <button class="btn-primary"><i class="fa-solid fa-plus"></i> Cadastrar Novo Item</button>
+      </div>
+
+      <!-- KPIs -->
+      <section class="kpis">
+        <div class="kpi">
+          <div class="kpi-icon blue"><i class="fa-solid fa-box-archive"></i></div>
+          <div class="kpi-text">
+            <p class="kpi-label">Total de Itens</p>
+            <p class="kpi-value">4.230</p>
+          </div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-icon orange"><i class="fa-solid fa-arrow-down"></i></div>
+          <div class="kpi-text">
+            <p class="kpi-label">Baixo Estoque</p>
+            <p class="kpi-value">12 Itens</p>
+          </div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-icon green"><i class="fa-regular fa-calendar"></i></div>
+          <div class="kpi-text">
+            <p class="kpi-label">Entradas Recentes</p>
+            <p class="kpi-value">8</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- SUBHEADER COM FILTROS -->
+      <div class="sub-header">
+        <h3 class="section-title">Itens em Destaque e Estoque Atual</h3>
+        <div class="filters">
+          <div class="filter-box">
+            <input type="text" placeholder="Categorias" />
+            <i class="fa-solid fa-magnifying-glass"></i>
+          </div>
+          <div class="filter-box">
+            <select>
+              <option>Status</option>
+              <option>Em Estoque</option>
+              <option>Estoque Baixo</option>
+              <option>Crítico</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- CARDS -->
+      <section class="cards-grid">
+        <!-- 1 -->
+        <article class="card">
+          <div class="card-top">
+            <div class="card-img"><img src="https://images.unsplash.com/photo-1586864387789-628af9feed72?w=200&h=200&fit=crop" alt="Martelo" /></div>
+            <div class="card-info">
+              <h4>Martelo Stanley 500g</h4>
+              <p><span>Categoria:</span> <b>Ferramentas</b></p>
+              <p><span>Quantidade:</span> <b>25</b></p>
+              <p><span>Status:</span> <span class="badge badge-green">Em Estoque</span></p>
+            </div>
+          </div>
+          <div class="card-actions">
+            <span class="actions-label">Ações</span>
+            <div class="actions-buttons">
+              <button class="btn-view"><i class="fa-regular fa-eye"></i> Visualizar</button>
+              <button class="btn-edit"><i class="fa-solid fa-pen"></i> Editar</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- 2 -->
+        <article class="card">
+          <div class="card-top">
+            <div class="card-img"><img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=200&h=200&fit=crop" alt="Cabos" /></div>
+            <div class="card-info">
+              <h4>Cabos Elétricos Flexíveis 2.5mm</h4>
+              <p><span>Categoria:</span> <b>Elétrica</b></p>
+              <p><span>Quantidade:</span> <b>45</b></p>
+              <p><span>Status:</span> <span class="badge badge-orange">Estoque Baixo</span></p>
+            </div>
+          </div>
+          <div class="card-actions">
+            <span class="actions-label">Ações</span>
+            <div class="actions-buttons">
+              <button class="btn-view"><i class="fa-regular fa-eye"></i> Visualizar</button>
+              <button class="btn-edit"><i class="fa-solid fa-pen"></i> Editar</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- 3 -->
+        <article class="card">
+          <div class="card-top">
+            <div class="card-img"><img src="https://images.unsplash.com/photo-1582539512163-67576d9740b4?w=200&h=200&fit=crop" alt="Óculos de Proteção" /></div>
+            <div class="card-info">
+              <h4>Óculos de Proteção 3M</h4>
+              <p><span>Categoria:</span> <b>EPIs</b></p>
+              <p><span>Quantidade:</span> <b>120</b></p>
+              <p><span>Status:</span> <span class="badge badge-green">Em Estoque</span></p>
+            </div>
+          </div>
+          <div class="card-actions">
+            <span class="actions-label">Ações</span>
+            <div class="actions-buttons">
+              <button class="btn-view"><i class="fa-regular fa-eye"></i> Visualizar</button>
+              <button class="btn-edit"><i class="fa-solid fa-pen"></i> Editar</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- 4 -->
+        <article class="card">
+          <div class="card-top">
+            <div class="card-img"><img src="https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=200&h=200&fit=crop" alt="Disjuntor" /></div>
+            <div class="card-info">
+              <h4>Disjuntor Monopolar 20A</h4>
+              <p><span>Categoria:</span> <b>Elétrica</b></p>
+              <p><span>Quantidade:</span> <b>30</b></p>
+              <p><span>Status:</span> <span class="badge badge-green">Em Estoque</span></p>
+            </div>
+          </div>
+          <div class="card-actions">
+            <span class="actions-label">Ações</span>
+            <div class="actions-buttons">
+              <button class="btn-view"><i class="fa-regular fa-eye"></i> Visualizar</button>
+              <button class="btn-edit"><i class="fa-solid fa-pen"></i> Editar</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- 5 -->
+        <article class="card">
+          <div class="card-top">
+            <div class="card-img"><img src="https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=200&h=200&fit=crop" alt="Disjuntor" /></div>
+            <div class="card-info">
+              <h4>Disjuntor Monopolar 20A</h4>
+              <p><span>Categoria:</span> <b>Elétrica</b></p>
+              <p><span>Quantidade:</span> <b>30</b></p>
+              <p><span>Status:</span> <span class="badge badge-green">Em Estoque</span></p>
+            </div>
+          </div>
+          <div class="card-actions">
+            <span class="actions-label">Ações</span>
+            <div class="actions-buttons">
+              <button class="btn-view"><i class="fa-regular fa-eye"></i> Visualizar</button>
+              <button class="btn-edit"><i class="fa-solid fa-pen"></i> Editar</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- 6 -->
+        <article class="card">
+          <div class="card-top">
+            <div class="card-img"><img src="https://images.unsplash.com/photo-1530124566582-a618bc2615dc?w=200&h=200&fit=crop" alt="Chaves Allen" /></div>
+            <div class="card-info">
+              <h4>Jogo de Chaves Allen Vonder</h4>
+              <p><span>Categoria:</span> <b>Ferramentas</b></p>
+              <p><span>Quantidade:</span> <b>18</b></p>
+              <p><span>Status:</span> <span class="badge badge-green">Em Estoque</span></p>
+            </div>
+          </div>
+          <div class="card-actions">
+            <span class="actions-label">Ações</span>
+            <div class="actions-buttons">
+              <button class="btn-view"><i class="fa-regular fa-eye"></i> Visualizar</button>
+              <button class="btn-edit"><i class="fa-solid fa-pen"></i> Editar</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- 7 -->
+        <article class="card">
+          <div class="card-top">
+            <div class="card-img"><img src="https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=200&h=200&fit=crop" alt="Notebook" /></div>
+            <div class="card-info">
+              <h4>Notebook Dell Vostro 3510</h4>
+              <p><span>Categoria:</span> <b>Informática</b></p>
+              <p><span>Quantidade:</span> <b>5</b></p>
+              <p><span>Status:</span> <span class="badge badge-red">Crítico</span></p>
+            </div>
+          </div>
+          <div class="card-actions">
+            <span class="actions-label">Ações</span>
+            <div class="actions-buttons">
+              <button class="btn-view"><i class="fa-regular fa-eye"></i> Visualizar</button>
+              <button class="btn-edit critical"><i class="fa-solid fa-pen"></i> Editar</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- 8 -->
+        <article class="card">
+          <div class="card-top">
+            <div class="card-img"><img src="https://images.unsplash.com/photo-1581090700227-1e37b190418e?w=200&h=200&fit=crop" alt="Multímetro" /></div>
+            <div class="card-info">
+              <h4>Multímetro Digital Minipa</h4>
+              <p><span>Categoria:</span> <b>Elétrica</b></p>
+              <p><span>Quantidade:</span> <b>8</b></p>
+              <p><span>Status:</span> <span class="badge badge-green">Em Estoque</span></p>
+            </div>
+          </div>
+          <div class="card-actions">
+            <span class="actions-label">Ações</span>
+            <div class="actions-buttons">
+              <button class="btn-view"><i class="fa-regular fa-eye"></i> Visualizar</button>
+              <button class="btn-edit"><i class="fa-solid fa-pen"></i> Editar</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- 9 -->
+        <article class="card">
+          <div class="card-top">
+            <div class="card-img"><img src="https://images.unsplash.com/photo-1581090700227-1e37b190418e?w=200&h=200&fit=crop" alt="Multímetro" /></div>
+            <div class="card-info">
+              <h4>Multímetro Digital Minipa</h4>
+              <p><span>Categoria:</span> <b>Elétrica</b></p>
+              <p><span>Quantidade:</span> <b>8</b></p>
+              <p><span>Status:</span> <span class="badge badge-green">Em Estoque</span></p>
+            </div>
+          </div>
+          <div class="card-actions">
+            <span class="actions-label">Ações</span>
+            <div class="actions-buttons">
+              <button class="btn-view"><i class="fa-regular fa-eye"></i> Visualizar</button>
+              <button class="btn-edit"><i class="fa-solid fa-pen"></i> Editar</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- 10 -->
+        <article class="card">
+          <div class="card-top">
+            <div class="card-img"><img src="https://images.unsplash.com/photo-1611273426858-450d8e3c9fce?w=200&h=200&fit=crop" alt="Fita Isolante" /></div>
+            <div class="card-info">
+              <h4>Fita Isolante 3M</h4>
+              <p><span>Categoria:</span> <b>Elétrica</b></p>
+              <p><span>Quantidade:</span> <b>200</b></p>
+              <p><span>Status:</span> <span class="badge badge-green">Em Estoque</span></p>
+            </div>
+          </div>
+          <div class="card-actions">
+            <span class="actions-label">Ações</span>
+            <div class="actions-buttons">
+              <button class="btn-view"><i class="fa-regular fa-eye"></i> Visualizar</button>
+              <button class="btn-edit"><i class="fa-solid fa-pen"></i> Editar</button>
+            </div>
+          </div>
+        </article>
+
+    
+        <!-- 12 -->
+        <article class="card">
+          <div class="card-top">
+            <div class="card-img"><img src="https://images.unsplash.com/photo-1558002038-1055907df827?w=200&h=200&fit=crop" alt="Sensor" /></div>
+            <div class="card-info">
+              <h4>Sensor de Movimento</h4>
+              <p><span>Categoria:</span> <b>Eletrônica</b></p>
+              <p><span>Quantidade:</span> <b>15</b></p>
+              <p><span>Status:</span> <span class="badge badge-green">Em Estoque</span></p>
+            </div>
+          </div>
+          <div class="card-actions">
+            <span class="actions-label">Ações</span>
+            <div class="actions-buttons">
+              <button class="btn-view"><i class="fa-regular fa-eye"></i> Visualizar</button>
+              <button class="btn-edit"><i class="fa-solid fa-pen"></i> Editar</button>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <footer class="footer">
+        <p>SENAI - Departamento Regional do Estado de São Paulo</p>
+        <p class="footer-links">
+          <a href="#">Links</a> · <a href="#">Departamento</a> · <a href="#">Notificações</a>
+        </p>
+      </footer>
+    </main>
+  </div>
 </body>
 </html>
+"
+Observation: Overwrite successful: /app/almoxarifado/index.html
