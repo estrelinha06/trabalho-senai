@@ -1,5 +1,14 @@
-body{
+body {
   margin: 0px;
+  background-color: #f8f9fa;
+}
+
+#fundohomesenai {
+  position: fixed; /* fixo para ficar no fundo */
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: -1;
 }
 
 #caixanavbar{
@@ -15,17 +24,18 @@ body{
   font-weight: 500;
   text-decoration: none;
   padding: 40px;
-  height: 94px;
+  height: 92px;
   top: -20px;
 
 }
-
 #caixatabela {
   background-color: #f58427;
-  margin-top: 200px !important;
-  position: static !important;
+  position: relative;
   padding: 20px; 
   border-radius: 8px;
+  max-width: 1000px; 
+  top: 100px;
+  margin-top: 0px;
 }
 
 #titulotabela {
@@ -34,40 +44,16 @@ body{
   font-weight: bold;
 }
 
-
-#table th, .table td {
-  vertical-align: middle;
-}
-
-
-#img-thumbnail {
-  object-fit: cover;
-}
-#logo_senai{
+#logo_senai {
   position: absolute;
   left: 0px;
   top: 0px;
-  width: 300px;
+  width: 303px;
+}
+.navbar-brand, .nav-link {
+    color: white !important;
 }
 
 .bg-body-tertiary {
-  --bs-bg-opacity: 1;
   background-color: rgb(8, 69, 201) !important;
-}
-
-#body_home{
-  background-image: url(/static/fundohomesenai.jpg);
-  background-repeat: no-repeat;
-  background-size: cover;
-  
-}
-
-#caixanavbar .navbar-brand, 
-#caixanavbar .nav-link, 
-#caixanavbar .dropdown-toggle {
-    color: #ffffff !important;
-}
-
-#caixanavbar .navbar-toggler-icon {
-    filter: invert(1);
 }
