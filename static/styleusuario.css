@@ -1,0 +1,66 @@
+/* Estilos gerais da página */
+body {
+    margin: 0px;
+    background-color: #f8f9fa;
+    font-family: sans-serif; /* Recomendado adicionar para manter a consistência */
+  }
+  
+  #fundohomesenai {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: -1;
+  }
+  
+  /* Navbar */
+  #caixanavbar {
+    margin-left: 300px;
+    width: 1620px;
+    margin-top: 0px;
+    font-weight: bold;
+    background-color: rgb(8, 69, 201);
+    color: #ffffff;
+    font-size: 16px;
+    padding: 40px;
+    height: 92px;
+    top: -20px;
+  }
+  
+  /* Container do Formulário */
+  #caixatabela {
+    background-color: #f58427;
+    position: relative;
+    padding: 20px; 
+    border-radius: 8px;
+    max-width: 1000px; 
+    margin-top: 20px; /* Ajustado para não ficar colado no topo */
+  }
+  
+  #titulotabela {
+    color: #ffffff !important; 
+    font-size: 28px;
+    font-weight: bold;
+  }
+  
+  /* Logo */
+  #logo_senai {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 303px;
+  }
+  
+  /* Ajustes finos para Bootstrap */
+  .navbar-brand, .nav-link {
+    color: white !important;
+  }
+  
+  .bg-body-tertiary {
+    background-color: rgb(8, 69, 201) !important;
+  }
+  
+  /* Margem extra para os campos dentro do formulário */
+  .form-label {
+    margin-bottom: 0.5rem;
+  }

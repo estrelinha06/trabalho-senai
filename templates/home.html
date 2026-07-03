@@ -7,6 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="static/stylehome.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body id='body_home'> 
   
@@ -29,10 +30,7 @@
                 Opções
               </a>
               <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="#">Action</a></li>
-                <li><a class="dropdown-item" href="#">Another action</a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" href="#">Something else here</a></li>
+                <li><a class="dropdown-item" href="/cadastrarusuario">Cadastrar Usuário</a></li>
               </ul>
             </li>
             
@@ -56,43 +54,41 @@
                       <th scope="col" id="produtocabecalho" class="py-3">Produto</th>
                       <th scope="col" id="quantidadecabecalho" class="py-3">Quantidade</th>
                       <th scope="col" id="descricaocabecalho" class="py-3 text-start">Descrição</th>
+                      <th scope="col" id="descricaocabecalho" class="py-3 text-start">Preço</th>
+                      <th scope="col" id="descricaocabecalho" class="py-3 text-start">Estoque Minimo</th>
+                      <th scope="col" id="descricaocabecalho" class="py-3 text-start">Categoria</th>
                       <th scope="col" id="imagemcabecalho" class="py-3">Imagem</th>
                   </tr>
               </thead>
               <tbody>
+
+                {% for item in resultado %}
                   <tr id="linha1">
-                      <td id="idproduto1" class="fw-bold text-muted">1</td>
-                      <td id="nomeproduto1">Parafuso</td>
-                      <td id="quantidade1"><span class="badge bg-secondary">200 un</span></td>
-                      <td id="descricao1" class="text-muted text-wrap text-start" style="max-width: 300px;">Parafuso sextavado de aço zincado.</td>
+                      <td id="idproduto1" class="fw-bold text-muted">{{item[0]}}</td>
+                      <td id="nomeproduto1">{{item[1]}}</td>
+                      <td id="quantidade1"><span class="badge bg-secondary">{{item[4]}} un</span></td>
+                      <td id="descricao1" class="text-muted text-wrap text-start" style="max-width: 300px;">{{item[3]}}</td>
+                      <td id="preco" class="text-muted text-wrap text-start" style="max-width: 300px;">{{item[5]}}</td>
+                      <td id="estoque_min" class="text-muted text-wrap text-start" style="max-width: 300px;">{{item[7]}}</td>
+                      <td id="categoria" class="text-muted text-wrap text-start" style="max-width: 300px;">{{item[2]}}</td>
                       <td>
-                          <img id="imagem1" src="static/parafuso.png" alt="Parafuso" class="img-thumbnail" style="width: 50px; height: 50px; object-fit: cover;">
+                        <button type="button" class="btn btn-primary" onclick="mostrar_imagem('{{item[6]}}')">Foto</button>
                       </td>
                   </tr>
-                  <tr id="linha2">
-                      <td id="idproduto2" class="fw-bold text-muted">2</td>
-                      <td id="nomeproduto2">Porca</td>
-                      <td id="quantidade2"><span class="badge bg-secondary">150 un</span></td>
-                      <td id="descricao2" class="text-muted text-wrap text-start" style="max-width: 300px;">Porca de alta resistência bitola 1/2.</td>
-                      <td>
-                          <img id="imagem2" src="static/porca.png" alt="Porca" class="img-thumbnail" style="width: 50px; height: 50px; object-fit: cover;">
-                      </td>
-                  </tr>
-                  <tr id="linha3">
-                      <td id="idproduto3" class="fw-bold text-muted">3</td>
-                      <td id="nomeproduto3">Arruela</td>
-                      <td id="quantidade3"><span class="badge bg-secondary">300 un</span></td>
-                      <td id="descricao3" class="text-muted text-wrap text-start" style="max-width: 300px;">Arruela lisa de aço carbono para fixação.</td>
-                      <td>
-                          <img id="imagem3" src="static/arruela.png" alt="Arruela" class="img-thumbnail" style="width: 50px; height: 50px; object-fit: cover;">
-                      </td>
-                  </tr>
+                {%endfor%}
               </tbody>
           </table>
       </div>
   
   </div>
-    </div>
+  </div>
 
+<script>
+    function mostrar_imagem(argumento){
+        Swal.fire({
+          imageUrl: argumento,
+        });
+}
+</script>
 </body>
 </html>
