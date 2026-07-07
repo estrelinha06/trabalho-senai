@@ -23,7 +23,9 @@ INSERT INTO usuarios (usuario, senha, papel)
 VALUES ('admin', '12345', 'admin');
 
 INSERT INTO usuarios (usuario, papel, senha)
-VALUES ('clara', 'usuario', 'abcde');
+VALUES ('clara', 'usuario', '$2a$12$9jdFFJ.nIHB4uDZsLmxwvOmoVHc52XVwo2Sly176Z3e8nOEWryiHu');
+
+DELETE FROM usuarios WHERE usuario = 'jorge';
 
 INSERT INTO estoque (id, nome_do_produto, categoria, descricao, qtde, preco, foto, estoque_min)
 VALUES (1, "Chave Fenda", "ferramenta", "Serve pra apertar parafuso", 20, 10.90,"https://static.martineliferramentas.com.br/image/cache/catalog/2021/produtos/todas-as-categorias/ferramentas-manuais/chave-de-fenda/chave-de-fenda-cruzada-phillips-14-x-12-gedore-036284_1-1000x1000.webp", 10);
@@ -43,3 +45,6 @@ VALUES (5, "Cabo eletrico", "insumos", "Serve pra conduzir energia", 10, 99.49, 
 
 select * from usuarios;
 select * from estoque;
+
+SELECT qtde FROM estoque WHERE nome_do_produto = 'Alicate';
+UPDATE estoque SET qtde = 12 WHERE nome_do_produto = 'Chave Fenda';
