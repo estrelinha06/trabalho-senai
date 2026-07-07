@@ -31,9 +31,9 @@ def home():
         cursor.close()
         conexao.close()
         return render_template("home.html", resultado=resultado)
-
   
     else:
+        print("entrou aqui")
         usuario = request.form.get("usuario")
         senha = request.form.get("senha")
 
@@ -41,35 +41,34 @@ def home():
             "SELECT usuario, senha FROM usuarios WHERE usuario=%s",
             (usuario,)
         )
-        resultado = cursor.fetchone()
+        resultado = cursor.fetchall()
 
   
         if resultado is None:
             cursor.close()
             conexao.close()
             return render_template("index_invalido.html")
-
-        print(resultado[1])
        
         senha_correta = bcrypt.checkpw(
             senha.encode("utf-8"),
-            resultado[1].encode("utf-8")
+            resultado[1][1].encode("utf-8")
         )
         
         print(senha_correta)
        
         if not senha_correta:
-            cursor.close()
+            
             conexao.close()
             return render_template("index_invalido.html")
-
-       
-        cursor.execute("SELECT * FROM estoque")
-        produtos = cursor.fetchall()
-
-        cursor.close()
-        conexao.close()
-        return render_template("home.html", resultado=produtos)
+        
+        else:
+            
+            cursor.execute("SELECT * FROM estoque")
+            produtos = cursor.fetchall()
+            
+            cursor.close()
+            conexao.close()
+            return render_template("home.html", resultado=produtos)
 
 
 @app.route("/cadastrarnovoitem")
