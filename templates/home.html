@@ -12,13 +12,16 @@
 <body id='body_home'> 
   
     <div class="container mt-3">
-        <img id='logo_senai' src='static/logo_senai.png' width='250px' height='90px' alt="Logo SENAI">
+        <img id='logo_senai' src='static/logo_senai.png' alt="Logo SENAI">
     </div>
-
-    <nav id="caixanavbar" class="navbar navbar-expand-lg bg-body-tertiary mt-3">
-      <div class="container">
+    
+    <nav id="caixanavbar" class="navbar navbar-expand-lg bg-body-tertiary mt-3 container">
+      <div class="container-fluid">
         <a class="navbar-brand" href="/">Voltar</a>
-        <a class="navbar-brand" href="/cadastrarnovoitem">Cadastrar novo item</a>
+        <a class="navbar-brand" href="/movimentacoes">Movimentações</a>
+        <a class="navbar-brand" href="/cadastrarusuario">Cadastrar Usuário</a>
+
+       
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
@@ -26,29 +29,25 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                Opções
-              </a>
-              <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="/cadastrarusuario">Cadastrar Usuário</a></li>
-              </ul>
+              
             </li>
             
           </ul>
-          <form class="d-flex" role="search">
-            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"/>
-            <button class="btn btn-outline-success" type="submit">Search</button>
-          </form>
+          
         </div>
       </div>
     </nav>
 
     <div id="caixatabela" class="container mt-4">
 
-      <h2 id="titulotabela" class="mb-5 text-secondary">Últimos Produtos</h2>
+      <div class="d-flex justify-content-between align-items-center mb-5">
+          <h2 id="titulotabela" class="m-0 text-secondary">Últimos Produtos</h2>
+          <a href="/cadastrarnovoitem" class="btn btn-light fw-bold text-dark px-4 shadow-sm">Cadastrar Novo Item</a>
+      </div>
   
       <div class="table-responsive bg-white rounded shadow-sm">
-          <table class="table table-hover align-middle mb-0 text-center"> <thead class="table-light border-bottom">
+          <table class="table table-hover align-middle mb-0 text-center"> 
+              <thead class="table-light border-bottom">
                   <tr>
                       <th scope="col" id="idcabecalho" class="py-3">ID</th>
                       <th scope="col" id="produtocabecalho" class="py-3">Produto</th>
@@ -58,6 +57,7 @@
                       <th scope="col" id="descricaocabecalho" class="py-3 text-start">Estoque Minimo</th>
                       <th scope="col" id="descricaocabecalho" class="py-3 text-start">Categoria</th>
                       <th scope="col" id="imagemcabecalho" class="py-3">Imagem</th>
+                     
                   </tr>
               </thead>
               <tbody>
@@ -72,8 +72,9 @@
                       <td id="estoque_min" class="text-muted text-wrap text-start" style="max-width: 300px;">{{item[7]}}</td>
                       <td id="categoria" class="text-muted text-wrap text-start" style="max-width: 300px;">{{item[2]}}</td>
                       <td>
-                        <button type="button" class="btn btn-primary" onclick="mostrar_imagem('{{item[6]}}')">Foto</button>
+                        <button type="button" class="btn btn-sm btn-primary" onclick="mostrar_imagem('{{item[6]}}')">Foto</button>
                       </td>
+                      
                   </tr>
                 {%endfor%}
               </tbody>
@@ -81,14 +82,13 @@
       </div>
   
   </div>
-  </div>
 
 <script>
     function mostrar_imagem(argumento){
         Swal.fire({
           imageUrl: argumento,
         });
-}
+    }
 </script>
 </body>
 </html>

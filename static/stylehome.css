@@ -1,25 +1,25 @@
-body{
+body {
   margin: 0px;
 }
 
-#caixanavbar{
-  margin-left: 300px;
-  margin-top: 30px;
-  width: 1620px;
-  height: 200px;
-  margin-top: 0px;
-  font-weight: bold;
-  background-color:rgb(8, 69, 201);
-  color: #ffffff;
-  font-size: 16px;
-  font-weight: 500;
-  text-decoration: none;
-  padding: 40px;
-  height: 94px;
-  top: -20px;
-
+#caixanavbar {
+  margin-top: 80px; 
+  background-color: rgb(8, 69, 201) !important;
+  padding: 15px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
+.navbar-brand, .nav-link {
+  color: #ffffff !important;
+  font-weight: bold;
+  font-size: 16px;
+  text-decoration: none;
+}
+
+.navbar-brand:hover, .nav-link:hover {
+  color: #e5e5e5 !important;
+}
 #caixatabela {
   background-color: #f58427;
   margin-top: 200px !important;
@@ -35,15 +35,15 @@ body{
 }
 
 
-#table th, .table td {
-  vertical-align: middle;
+.table th, .table td {
+  vertical-align: middle !important;
 }
-
 
 #img-thumbnail {
   object-fit: cover;
 }
-#logo_senai{
+
+#logo_senai {
   position: absolute;
   left: 0px;
   top: 0px;
@@ -55,11 +55,10 @@ body{
   background-color: rgb(8, 69, 201) !important;
 }
 
-#body_home{
+#body_home {
   background-image: url(/static/fundohomesenai.jpg);
   background-repeat: no-repeat;
   background-size: cover;
-  
 }
 
 #caixanavbar .navbar-brand, 
@@ -70,4 +69,18 @@ body{
 
 #caixanavbar .navbar-toggler-icon {
     filter: invert(1);
+}
+
+
+.table .btn {
+  white-space: nowrap;
+}
+
+#logo_senai {
+  position: absolute;
+  left: 20px;
+  top: 15px;
+  width: 250px;
+  height: auto;
+  z-index: 10;
 }
