@@ -51,7 +51,7 @@ def home():
        
         senha_correta = bcrypt.checkpw(
             senha.encode("utf-8"),
-            resultado[1][1].encode("utf-8")
+            resultado[0][1].encode("utf-8")
         )
         
         print(senha_correta)
