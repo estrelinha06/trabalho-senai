@@ -15,26 +15,19 @@
         <img id='logo_senai' src='static/logo_senai.png' alt="Logo SENAI">
     </div>
     
-    <nav id="caixanavbar" class="navbar navbar-expand-lg bg-body-tertiary mt-3 container">
+   <nav id="caixanavbar" class="navbar navbar-expand-lg bg-body-tertiary mt-3 container">
       <div class="container-fluid">
         <a class="navbar-brand" href="/">Voltar</a>
         <a class="navbar-brand" href="/movimentacoes">Movimentações</a>
-        <a class="navbar-brand" href="/cadastrarusuario">Cadastrar Usuário</a>
 
-       
+        <!-- ADICIONE ESTAS 3 LINHAS ABAIXO -->
+        {% if papel == 'admin' %}
+            <a class="navbar-brand" href="/cadastrarusuario">Cadastrar Usuário</a>
+        {% endif %}
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item dropdown">
-              
-            </li>
-            
-          </ul>
-          
-        </div>
       </div>
     </nav>
 

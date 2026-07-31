@@ -1,9 +1,9 @@
-from flask import Flask, render_template, redirect, url_for, request
+from flask import Flask, render_template, redirect, url_for, request, session
 import mysql.connector
 import bcrypt 
 
 app = Flask(__name__)
-
+app.secret_key = 'sua_chave_secreta_aqui'
 
 def obter_conexao():
     return mysql.connector.connect(
@@ -16,35 +16,40 @@ def obter_conexao():
 
 @app.route("/")
 def index():
+    
+    session.clear()
     return render_template("index.html")
 
 @app.route("/home", methods=['POST', 'GET'])
 def home():
     conexao = obter_conexao()
     cursor = conexao.cursor()
-
-   
+       
     if request.method == 'GET':
+        if 'usuario' not in session:
+            cursor.close()
+            conexao.close()
+            return redirect(url_for('index'))
+            
         cursor.execute("SELECT * FROM estoque;")
         resultado = cursor.fetchall()
         
         cursor.close()
         conexao.close()
-        return render_template("home.html", resultado=resultado)
-  
+        return render_template("home.html", resultado=resultado, papel=session.get('papel'))
+    
     else:
-        print("entrou aqui")
         usuario = request.form.get("usuario")
         senha = request.form.get("senha")
 
+        
         cursor.execute(
-            "SELECT usuario, senha FROM usuarios WHERE usuario=%s",
+            "SELECT usuario, senha, papel FROM usuarios WHERE usuario=%s",
             (usuario,)
         )
         resultado = cursor.fetchall()
-
-  
-        if resultado is None:
+ 
+        if not resultado:
             cursor.close()
             conexao.close()
             return render_template("index_invalido.html")
@@ -54,21 +59,20 @@ def home():
             resultado[0][1].encode("utf-8")
         )
         
-        print(senha_correta)
-       
         if not senha_correta:
-            
             conexao.close()
             return render_template("index_invalido.html")
-        
         else:
+        
+            session['usuario'] = resultado[0][0]
+            session['papel'] = resultado[0][2]
             
             cursor.execute("SELECT * FROM estoque")
             produtos = cursor.fetchall()
             
             cursor.close()
             conexao.close()
-            return render_template("home.html", resultado=produtos)
+            return render_template("home.html", resultado=produtos, papel=session['papel'])
 
 
 @app.route("/cadastrarnovoitem")
@@ -128,6 +132,8 @@ def salvarusuario():
 
 @app.route("/cadastrarusuario")
 def cadastrarusuario():
+    if session.get('papel') != 'admin':
+        return redirect(url_for('home'))
     return render_template("cadastrarusuario.html")
 
 
