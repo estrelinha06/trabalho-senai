@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for, request, session
+from flask import Flask, render_template, redirect, url_for, request, session, jsonify
 import mysql.connector
 import bcrypt 
 
@@ -82,6 +82,9 @@ def cadastrarnovoitem():
 
 @app.route("/salvaritem", methods=['POST', 'GET'])
 def salvaritem():
+
+
+
     if request.method == 'POST':
         nome_produto = request.form.get('nome')
         qtde = request.form.get('quantidade')
@@ -182,6 +185,107 @@ def registrarmovimentacao():
         conexao.close()
 
     return redirect(url_for('home'))
+
+
+
+
+#api
+
+
+@app.route('/api/salvaritem', methods=['POST'])
+def api_salvaritem():
+
+    dados = request.get_json()
+
+    id = dados.get('id')
+    nome_do_produto = dados.get('nome_do_produto')
+    categoria = dados.get('categoria')
+    descricao = dados.get('descricao')
+    qtde = dados.get('qtde')
+    preco = dados.get('preco')
+    foto = dados.get('foto')
+    estoque_min = dados.get('estoque_min')
+   
+    item = (id, nome_do_produto, categoria, descricao, qtde, preco, foto, estoque_min)
+    query = "INSERT INTO estoque (id, nome_do_produto, categoria, descricao, qtde, preco, foto, estoque_min) VALUES (%s, %s, %s, %s, %s, %s, %s, %s);"
+        
+        
+    con = mysql.connector.connect(
+        host='localhost',
+        database='almoxarifado',
+        user='root',
+        password='',
+        port=3306
+        
+    )
+
+    cursor = con.cursor()
+    cursor.execute(query, item)
+    con.commit()
+
+
+    return jsonify({"status": "sucesso", "mensagem": "item inserido com sucesso!"}), 201
+
+
+@app.route("/api/cadastrarusuario", methods=['POST'])
+def api_cadastrarusuario():
+
+    dados = request.get_json()
+    
+    usuario = dados.get('usuario')
+    senha = dados.get('senha')
+    papel = dados.get('papel')
+    
+    senha_criptografada = bcrypt.hashpw(senha.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+    
+    conexao = obter_conexao()
+    cursor = conexao.cursor()
+    
+    query = "INSERT INTO usuarios (usuario, senha, papel) VALUES (%s, %s, %s);"
+    valores = (usuario, senha_criptografada, papel)
+    cursor.execute(query, valores)
+    conexao.commit()
+    
+    cursor.close()
+    conexao.close()
+
+    return jsonify({"status": "sucesso", "mensagem": "usuario cadastrado com sucesso!"}), 201
+
+
+@app.route("/api/estoque", methods=['GET'])
+def api_movimentacoes():
+
+    
+    con = mysql.connector.connect(
+                host='localhost',
+                database='almoxarifado',
+                user='root',
+                password='',
+                port=3306
+                
+            )
+        
+    cursor = con.cursor()
+    cursor.execute("SELECT * FROM estoque;")
+    resultado = cursor.fetchall()
+    con.commit()
+
+
+    lista_produtos = []
+    for row in resultado:
+        produto = {
+            "ID": row[0],
+            "Item": row[1],
+            "Categoria": row[2],
+            "Descricao": row[3],
+            "quantidade": row[4],
+            "Preço": float(row[5]),
+            "foto": row[6],
+            "estoque_min": row[7]
+        }
+        lista_produtos.append(produto)
+
+    return jsonify(lista_produtos), 201
 
 
 if __name__ == "__main__":
