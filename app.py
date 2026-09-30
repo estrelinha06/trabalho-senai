@@ -7,10 +7,10 @@ app.secret_key = 'sua_chave_secreta_aqui'
 
 def obter_conexao():
     return mysql.connector.connect(
-        host='localhost',
+        host='db',
         port=3306,
         user='root',
-        password='',
+        password='mysql_root',
         database='almoxarifado'
     )
 
@@ -211,10 +211,10 @@ def api_salvaritem():
         
         
     con = mysql.connector.connect(
-        host='localhost',
+        host='db',
         database='almoxarifado',
         user='root',
-        password='',
+        password='mysql_root',
         port=3306
         
     )
@@ -257,10 +257,10 @@ def api_movimentacoes():
 
     
     con = mysql.connector.connect(
-                host='localhost',
+                host='db',
                 database='almoxarifado',
                 user='root',
-                password='',
+                password='mysql_root',
                 port=3306
                 
             )

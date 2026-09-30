@@ -1,4 +1,4 @@
-create database almoxarifado;
+CREATE DATABASE IF NOT EXISTS almoxarifado;
 
 use almoxarifado;
 
@@ -57,22 +57,3 @@ UPDATE estoque SET qtde = 12 WHERE nome_do_produto = 'Chave Fenda';
 
 
 
-
-import React, { useState } from 'react';
-import { View, TextInput, Button } from 'react-native';
-
-export default function AtualizaEstoque() {
-    const [item, setItem] = useState('');
-    const [qtde, setQtde] = useState('');
-
-    const enviarFormlario = async () => {
-        await fetch('http://api/salvaritem', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ nome, cpf })
-        });
-    };
-
-}
