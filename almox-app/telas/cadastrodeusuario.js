@@ -13,18 +13,44 @@ import {
   Alert 
 } from 'react-native';
 
+const API_URL = "http://10.154.20.23:5000";
+
 export default function CadastrarUsuario({ navigation }) {
   const [usuario, setUsuario] = useState('');
   const [senha, setSenha] = useState('');
-  const [papel, setPapel] = useState('usuario'); // Valor padrão ou selecione vazio
+  const [papel, setPapel] = useState('usuario');
 
-  const handleSalvar = () => {
+  const handleSalvar = async () => {
     if (!usuario || !senha) {
       Alert.alert("Erro", "Por favor, preencha todos os campos obrigatórios.");
       return;
     }
-    Alert.alert("Sucesso", "Usuário cadastrado com sucesso!");
-    navigation.goBack();
+
+    try {
+      const resposta = await fetch(`${API_URL}/api/cadastrarusuario`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          usuario: usuario,
+          senha: senha,
+          papel: papel
+        }),
+      });
+
+      const resultado = await resposta.json();
+
+      if (resposta.ok) {
+        Alert.alert("Sucesso", "Usuário cadastrado com sucesso no banco de dados!");
+        navigation.goBack();
+      } else {
+        Alert.alert("Erro", resultado.mensagem || "Não foi possível cadastrar o usuário.");
+      }
+    } catch (erro) {
+      console.error("Erro ao comunicar com a API:", erro);
+      Alert.alert("Erro", "Falha na conexão com o servidor.");
+    }
   };
 
   return (

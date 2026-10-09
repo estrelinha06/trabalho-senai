@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   StyleSheet, 
   Text, 
@@ -14,16 +14,30 @@ import {
 } from 'react-native';
 
 export default function Movimentacoes({ navigation }) {
-  // Lista simulada de movimentações/estoque (equivalente ao loop do backend)
-  const [resultado, setResultado] = useState([
-    [1, 'Produto Exemplo 1', 'Entrada', 10, '10 un', 'Descrição do primeiro produto registrado no sistema.'],
-    [2, 'Produto Exemplo 2', 'Saída', 5, '5 un', 'Descrição do segundo produto registrado no sistema.']
-  ]);
+  // Estado que vai guardar os dados vindos do MySQL via Python
+  const [resultado, setResultado] = useState([]);
 
   // Estados do formulário de nova movimentação
   const [produto, setProduto] = useState('');
   const [tipoMovimentacao, setTipoMovimentacao] = useState('Entrada');
   const [quantidade, setQuantidade] = useState('');
+
+  // Função para carregar os dados do banco quando a tela abrir
+  useEffect(() => {
+    carregarEstoque();
+  }, []);
+
+  const carregarEstoque = async () => {
+    try {
+      
+      const resposta = await fetch('http://10.154.20.23:5000/api/estoque');
+      const dados = await resposta.json();
+      setResultado(dados);
+    } catch (erro) {
+      console.error("Erro ao carregar estoque:", erro);
+      Alert.alert("Erro", "Não foi possível conectar ao servidor.");
+    }
+  };
 
   const handleSalvarMovimentacao = () => {
     if (!produto || !quantidade) {
@@ -31,7 +45,6 @@ export default function Movimentacoes({ navigation }) {
       return;
     }
     Alert.alert("Sucesso", "Movimentação registrada com sucesso!");
-    // Limpar campos ou atualizar lista se necessário
     setProduto('');
     setQuantidade('');
   };
@@ -48,7 +61,6 @@ export default function Movimentacoes({ navigation }) {
       >
         <ScrollView contentContainerStyle={styles.scrollContainer}>
           
-          {/* Logo do Senai alinhada à esquerda igual às outras telas */}
           <View style={styles.logoContainer}>
             <Image 
               source={require('../assets/logo_senai.png')} 
@@ -57,44 +69,40 @@ export default function Movimentacoes({ navigation }) {
             />
           </View>
 
-          {/* Barra de Navegação (Voltar) */}
           <View style={styles.caixaNavbar}>
             <TouchableOpacity onPress={() => navigation.goBack()}>
               <Text style={styles.navLink}>Voltar</Text>
             </TouchableOpacity>
           </View>
 
-          {/* Seção 1: Tabela de Estoque / Movimentações */}
+          {/* Seção da Tabela consumindo os dados do MySQL */}
           <View style={styles.caixaTabela}>
-            <Text style={styles.tituloTabela}>Estoque</Text>
+            <Text style={styles.tituloTabela}>Estoque </Text>
 
             <View style={styles.tabelaContainer}>
-              {/* Cabeçalho da Tabela */}
               <View style={styles.tabelaHeader}>
-                <Text style={[styles.thText, { flex: 1 }]}>ID Reg.</Text>
+                <Text style={[styles.thText, { flex: 1 }]}>ID</Text>
                 <Text style={[styles.thText, { flex: 2 }]}>Produto</Text>
-                <Text style={[styles.thText, { flex: 1.5 }]}>Quantidade</Text>
+                <Text style={[styles.thText, { flex: 1.5 }]}>Qtd</Text>
                 <Text style={[styles.thText, { flex: 3 }]}>Descrição</Text>
               </View>
 
-              {/* Linhas da Tabela */}
-              {resultado.map((movimento, index) => (
+              {resultado.map((item, index) => (
                 <View key={index} style={styles.tabelaRow}>
-                  <Text style={[styles.tdTextBold, { flex: 1 }]}>{movimento[0]}</Text>
-                  <Text style={[styles.tdText, { flex: 2 }]}>{movimento[1]}</Text>
-                  <Text style={[styles.tdTextBold, { flex: 1.5 }]}>{movimento[4]}</Text>
-                  <Text style={[styles.tdTextMuted, { flex: 3 }]} numberOfLines={2}>{movimento[5]}</Text>
+                  <Text style={[styles.tdTextBold, { flex: 1 }]}>{item.ID}</Text>
+                  <Text style={[styles.tdText, { flex: 2 }]}>{item.Item}</Text>
+                  <Text style={[styles.tdTextBold, { flex: 1.5 }]}>{item.quantidade} un</Text>
+                  <Text style={[styles.tdTextMuted, { flex: 3 }]} numberOfLines={2}>{item.Descricao}</Text>
                 </View>
               ))}
             </View>
           </View>
 
-          {/* Seção 2: Formulário para Lançar Nova Movimentação */}
+          {/* Formulário */}
           <View style={[styles.caixaTabela, { marginBottom: 40 }]}>
-            <Text style={styles.tituloTabela}>Lançar Nova Movimentação</Text>
+            <Text style={styles.tituloTabela}>Lançar Movimentação</Text>
 
             <View style={styles.formCard}>
-              
               <View style={styles.inputGroup}>
                 <Text style={styles.label}>Nome do Produto</Text>
                 <TextInput
@@ -154,7 +162,6 @@ export default function Movimentacoes({ navigation }) {
                   <Text style={styles.btnSalvarTexto}>Salvar Movimentação</Text>
                 </TouchableOpacity>
               </View>
-
             </View>
           </View>
 
@@ -186,8 +193,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   tituloTabela: { color: '#ffffff', fontSize: 24, fontWeight: 'bold', marginBottom: 20 },
-  
-  // Estilização da Tabela em React Native
   tabelaContainer: { backgroundColor: '#ffffff', borderRadius: 8, overflow: 'hidden' },
   tabelaHeader: { 
     flexDirection: 'row', 
@@ -210,8 +215,6 @@ const styles = StyleSheet.create({
   tdText: { color: '#212529', fontSize: 13, textAlign: 'center' },
   tdTextBold: { fontWeight: 'bold', color: '#6c757d', fontSize: 13, textAlign: 'center' },
   tdTextMuted: { color: '#6c757d', fontSize: 12, textAlign: 'left' },
-
-  // Formulário
   formCard: { backgroundColor: '#ffffff', borderRadius: 8, padding: 20 },
   inputGroup: { marginBottom: 15 },
   label: { fontWeight: 'bold', color: '#6c757d', fontSize: 14, marginBottom: 6 },
@@ -242,7 +245,6 @@ const styles = StyleSheet.create({
   },
   tipoTexto: { color: '#6c757d', fontWeight: 'bold', fontSize: 14 },
   tipoTextoAtivo: { color: '#ffffff' },
-
   buttonContainer: { 
     flexDirection: 'row', 
     justifyContent: 'space-between', 

@@ -9,7 +9,8 @@ import {
   Switch, 
   ImageBackground,
   KeyboardAvoidingView,
-  Platform
+  Platform,
+  Alert
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { NavigationContainer } from '@react-navigation/native';
@@ -22,16 +23,40 @@ import CadastrarUsuario from './telas/cadastrodeusuario';
 import Movimentacoes from './telas/movimentacoes';
 
 const Stack = createNativeStackNavigator();
-const API_URL = "http://10.154.20.23:5000"
+const API_URL = "http://10.154.20.23:5000"; 
 
 function LoginScreen({ navigation }) {
   const [usuario, setUsuario] = useState('');
   const [senha, setSenha] = useState('');
   const [lembrar, setLembrar] = useState(false);
 
-  const handleLogin = () => {
-    console.log('Usuário:', usuario);
-    navigation.navigate('Home');
+  const handleLogin = async () => {
+    if (!usuario || !senha) {
+      Alert.alert("Erro", "Por favor, preencha o usuário e a senha.");
+      return;
+    }
+
+    try {
+      const resposta = await fetch(`${API_URL}/api/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ usuario, senha }),
+      });
+
+      const resultado = await resposta.json();
+
+      if (resposta.ok) {
+        // Envia o papel do usuário logado para a tela Home
+        navigation.navigate('Home', { papelUser: resultado.papel, nomeUser: resultado.usuario });
+      } else {
+        Alert.alert("Falha no Login", resultado.mensagem || "Usuário ou senha incorretos.");
+      }
+    } catch (erro) {
+      console.error("Erro ao conectar:", erro);
+      Alert.alert("Erro", "Não foi possível conectar ao servidor.");
+    }
   };
 
   return (
@@ -97,13 +122,18 @@ function LoginScreen({ navigation }) {
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login" screenOptions={{ headerShown: false }}><Stack.Screen name="Login" component={LoginScreen} /><Stack.Screen name="Home" component={Home} /><Stack.Screen name="CadastrarItem" component={CadastrarItem} /><Stack.Screen name="CadastrarUsuario" component={CadastrarUsuario} /><Stack.Screen name="Movimentacoes" component={Movimentacoes} /></Stack.Navigator>
+      <Stack.Navigator initialRouteName="Login" screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="Home" component={Home} />
+        <Stack.Screen name="CadastrarItem" component={CadastrarItem} />
+        <Stack.Screen name="CadastrarUsuario" component={CadastrarUsuario} />
+        <Stack.Screen name="Movimentacoes" component={Movimentacoes} />
+      </Stack.Navigator>
     </NavigationContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  logoSenai: { width: 180, height: 45 },
   background: {
     flex: 1,
     justifyContent: 'center',

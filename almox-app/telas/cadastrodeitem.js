@@ -13,6 +13,8 @@ import {
   Alert 
 } from 'react-native';
 
+const API_URL = "http://10.154.20.23:5000";
+
 export default function CadastrarItem({ navigation }) {
   const [nome, setNome] = useState('');
   const [idItem, setIdItem] = useState('');
@@ -23,9 +25,42 @@ export default function CadastrarItem({ navigation }) {
   const [descricao, setDescricao] = useState('');
   const [imagem, setImagem] = useState('');
 
-  const handleSalvar = () => {
-    Alert.alert("Sucesso", "Item salvo no almoxarifado com sucesso!");
-    navigation.goBack();
+  const handleSalvar = async () => {
+    if (!nome || !idItem || !quantidade || !preco) {
+      Alert.alert("Erro", "Por favor, preencha os campos principais obrigatórios.");
+      return;
+    }
+
+    try {
+      const resposta = await fetch(`${API_URL}/api/salvaritem`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id: parseInt(idItem),
+          nome_do_produto: nome,
+          categoria: categoria,
+          descricao: descricao,
+          qtde: parseInt(quantidade),
+          preco: parseFloat(preco),
+          foto: imagem,
+          estoque_min: parseInt(estoqueMinimo || 0)
+        }),
+      });
+
+      const resultado = await resposta.json();
+
+      if (resposta.ok) {
+        Alert.alert("Sucesso", "Item salvo no banco de dados com sucesso!");
+        navigation.goBack();
+      } else {
+        Alert.alert("Erro", resultado.mensagem || "Não foi possível guardar o item.");
+      }
+    } catch (erro) {
+      console.error("Erro ao comunicar com a API:", erro);
+      Alert.alert("Erro", "Falha na conexão com o servidor.");
+    }
   };
 
   return (
@@ -78,11 +113,11 @@ export default function CadastrarItem({ navigation }) {
                     onChangeText={setIdItem}
                     placeholder="ID"
                     placeholderTextColor="#adb5bd"
+                    keyboardType="numeric"
                   />
                 </View>
               </View>
 
-              {/* Linha tripla ajustada com espaçamento uniforme */}
               <View style={styles.rowTriple}>
                 <View style={styles.inputGroupTriple}>
                   <Text style={styles.label} numberOfLines={1}>Quantidade</Text>
@@ -207,8 +242,6 @@ const styles = StyleSheet.create({
   tituloTabela: { color: '#ffffff', fontSize: 24, fontWeight: 'bold', marginBottom: 20 },
   formCard: { backgroundColor: '#ffffff', borderRadius: 8, padding: 20 },
   row: { flexDirection: 'row', justifyContent: 'space-between' },
-  
-  // Estilo específico para a linha com 3 colunas iguais
   rowTriple: { 
     flexDirection: 'row', 
     justifyContent: 'space-between', 
@@ -218,7 +251,6 @@ const styles = StyleSheet.create({
     flex: 1, 
     marginHorizontal: 3 
   },
-
   inputGroup: { marginBottom: 15 },
   label: { fontWeight: 'bold', color: '#6c757d', fontSize: 13, marginBottom: 6 },
   input: {
