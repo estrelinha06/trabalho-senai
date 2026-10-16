@@ -23,7 +23,9 @@ import CadastrarUsuario from './telas/cadastrodeusuario';
 import Movimentacoes from './telas/movimentacoes';
 
 const Stack = createNativeStackNavigator();
-const API_URL = "http://10.154.20.23:5000"; 
+
+
+const API_URL = "http://10.154.20.15:5000";
 
 function LoginScreen({ navigation }) {
   const [usuario, setUsuario] = useState('');
@@ -48,14 +50,17 @@ function LoginScreen({ navigation }) {
       const resultado = await resposta.json();
 
       if (resposta.ok) {
-        // Envia o papel do usuário logado para a tela Home
-        navigation.navigate('Home', { papelUser: resultado.papel, nomeUser: resultado.usuario });
+        // Login bem-sucedido! Navega para a Home enviando o papel (admin ou usuario) e o nome
+        navigation.navigate('Home', { 
+          papel: resultado.papel, 
+          usuario: resultado.usuario 
+        });
       } else {
         Alert.alert("Falha no Login", resultado.mensagem || "Usuário ou senha incorretos.");
       }
     } catch (erro) {
-      console.error("Erro ao conectar:", erro);
-      Alert.alert("Erro", "Não foi possível conectar ao servidor.");
+      console.error("Erro ao conectar com a API:", erro);
+      Alert.alert("Erro", "Não foi possível conectar ao servidor. Verifique o IP e se o Python/Docker está rodando.");
     }
   };
 

@@ -288,5 +288,48 @@ def api_movimentacoes():
     return jsonify(lista_produtos), 201
 
 
+@app.route("/api/login", methods=['POST'])
+def api_login():
+    try:
+        dados = request.get_json()
+        print(dados, flush=True)
+        if not dados:
+            return jsonify({"status": "erro", "mensagem": "Dados inválidos"}), 400
+            
+        usuario = dados.get('usuario')
+        senha = dados.get('senha')
+    
+        conexao = obter_conexao()
+        print("chegoooou!", flush=True)
+        cursor = conexao.cursor()
+        
+        cursor.execute("SELECT usuario, senha, papel FROM usuarios WHERE usuario = %s", (usuario,))
+        resultado = cursor.fetchall()
+        
+        cursor.close()
+        conexao.close()
+
+        if not resultado:
+            return jsonify({"status": "erro", "mensagem": "Usuário não encontrado!"}), 401
+
+        senha_correta = bcrypt.checkpw(
+            senha.encode("utf-8"),
+            resultado[0][1].encode("utf-8")
+        )
+
+        if not senha_correta:
+            return jsonify({"status": "erro", "mensagem": "Senha incorreta!"}), 401
+
+        return jsonify({
+            "status": "sucesso",
+            "usuario": resultado[0][0],
+            "papel": resultado[0][2]
+        }), 200
+    except Exception as e:
+        return jsonify({"status": "erro", "mensagem": str(e)}), 500
+
+
+
+
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0')

@@ -30,7 +30,7 @@ export default function Movimentacoes({ navigation }) {
   const carregarEstoque = async () => {
     try {
       
-      const resposta = await fetch('http://10.154.20.23:5000/api/estoque');
+      const resposta = await fetch('http://10.154.20.15:5000/api/estoque');
       const dados = await resposta.json();
       setResultado(dados);
     } catch (erro) {

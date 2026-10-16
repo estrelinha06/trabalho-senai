@@ -13,7 +13,7 @@ import {
   Alert 
 } from 'react-native';
 
-const API_URL = "http://10.154.20.23:5000";
+const API_URL = "http://10.154.20.15:5000";
 
 export default function CadastrarUsuario({ navigation }) {
   const [usuario, setUsuario] = useState('');
