@@ -254,22 +254,19 @@ def api_cadastrarusuario():
 
 @app.route("/api/estoque", methods=['GET'])
 def api_movimentacoes():
-
-    
     con = mysql.connector.connect(
-                host='db',
-                database='almoxarifado',
-                user='root',
-                password='mysql_root',
-                port=3306
-                
-            )
+        host='db',
+        database='almoxarifado',
+        user='root',
+        password='mysql_root',
+        port=3306
+    )
         
     cursor = con.cursor()
     cursor.execute("SELECT * FROM estoque;")
     resultado = cursor.fetchall()
-    con.commit()
-
+    cursor.close()
+    con.close()
 
     lista_produtos = []
     for row in resultado:
@@ -285,8 +282,7 @@ def api_movimentacoes():
         }
         lista_produtos.append(produto)
 
-    return jsonify(lista_produtos), 201
-
+    return jsonify(lista_produtos), 200
 
 @app.route("/api/login", methods=['POST'])
 def api_login():
@@ -328,6 +324,52 @@ def api_login():
     except Exception as e:
         return jsonify({"status": "erro", "mensagem": str(e)}), 500
 
+@app.route("/api/registrarmovimentacao", methods=['POST'])
+def registrar_movimentacao():
+    try:
+        dados = request.get_json()
+        if not dados:
+            return jsonify({"status": "erro", "mensagem": "Dados inválidos"}), 400
+
+        produto = dados.get('produto', '').strip()
+        tipo_movimentacao = dados.get('tipo_movimentacao')
+        qtde = int(dados.get('quantidade', 0))
+
+        conexao = obter_conexao()
+        cursor = conexao.cursor()
+        
+        # Procura o produto ignorando espaços extras nas pontas
+        query = "SELECT qtde FROM estoque WHERE TRIM(nome_do_produto) = TRIM(%s);"
+        cursor.execute(query, (produto,))
+        resultado_busca = cursor.fetchone()
+
+        if not resultado_busca:
+            cursor.close()
+            conexao.close()
+            return jsonify({"status": "erro", "mensagem": f"Produto '{produto}' não encontrado no estoque!"}), 404
+
+        qtde_banco = int(resultado_busca[0])
+        
+        if tipo_movimentacao == "Entrada":
+            nova_qtde = qtde_banco + qtde
+        elif tipo_movimentacao == "Saida":
+            nova_qtde = qtde_banco - qtde
+            if nova_qtde < 0:
+                nova_qtde = 0
+        else:
+            nova_qtde = qtde_banco
+
+        query_update = "UPDATE estoque SET qtde = %s WHERE TRIM(nome_do_produto) = TRIM(%s);"
+        cursor.execute(query_update, (nova_qtde, produto))     
+        conexao.commit()
+        
+        cursor.close()
+        conexao.close()
+
+        return jsonify({"status": "sucesso", "mensagem": "Movimentação registrada com sucesso!"}), 200
+    except Exception as e:
+        print(f"ERRO NO PYTHON: {str(e)}", flush=True)
+        return jsonify({"status": "erro", "mensagem": str(e)}), 500
 
 
 

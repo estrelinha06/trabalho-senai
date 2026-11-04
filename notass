@@ -1,0 +1,4 @@
+cd almox-app
+npm install expo   
+npx expo login --username "estrelinha06" --password "Cfl082009."
+npx expo start
