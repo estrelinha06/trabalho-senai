@@ -13,40 +13,82 @@ import {
   Alert 
 } from 'react-native';
 
-export default function Movimentacoes({ navigation }) {
-  // Estado que vai guardar os dados vindos do MySQL via Python
-  const [resultado, setResultado] = useState([]);
+const API_URL = "http://10.154.20.69:5000";
 
-  // Estados do formulário de nova movimentação
+export default function Movimentacoes({ navigation }) {
+  const [resultado, setResultado] = useState([]);
   const [produto, setProduto] = useState('');
   const [tipoMovimentacao, setTipoMovimentacao] = useState('Entrada');
   const [quantidade, setQuantidade] = useState('');
 
-  // Função para carregar os dados do banco quando a tela abrir
   useEffect(() => {
     carregarEstoque();
   }, []);
 
   const carregarEstoque = async () => {
     try {
-      
-      const resposta = await fetch('http://10.154.20.15:5000/api/estoque');
+      const resposta = await fetch(`${API_URL}/api/estoque`);
       const dados = await resposta.json();
-      setResultado(dados);
+      
+      if (resposta.ok && Array.isArray(dados)) {
+        setResultado(dados);
+      } else {
+        console.error("A resposta da API não é um array válido:", dados);
+      }
     } catch (erro) {
       console.error("Erro ao carregar estoque:", erro);
       Alert.alert("Erro", "Não foi possível conectar ao servidor.");
     }
   };
 
-  const handleSalvarMovimentacao = () => {
+  const handleSalvarMovimentacao = async () => {
     if (!produto || !quantidade) {
       Alert.alert("Erro", "Por favor, preencha todos os campos obrigatórios.");
       return;
     }
-    Alert.alert("Sucesso", "Movimentação registrada com sucesso!");
-    setProduto('');
-    setQuantidade('');
+
+    try {
+      const resposta = await fetch(`${API_URL}/api/registrarmovimentacao`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          produto: produto.trim(),
+          tipo_movimentacao: tipoMovimentacao,
+          quantidade: Number(quantidade)
+        })
+      });
+
+      const textoResposta = await resposta.text();
+      let resultadoApi;
+      try {
+        resultadoApi = JSON.parse(textoResposta);
+      } catch (e) {
+        Alert.alert("Erro", "O servidor retornou uma resposta inesperada. Verifique o terminal do Python.");
+        return;
+      }
+
+      if (resposta.ok) {
+        Alert.alert("Sucesso", "Movimentação registrada com sucesso!");
+        setProduto('');
+        setQuantidade('');
+        navigation.goBack();
+      } else {
+        Alert.alert("Erro", resultadoApi.mensagem || "Não foi possível registrar a movimentação.");
+      }
+    } catch (erro) {
+      console.error("Erro ao comunicar com a API:", erro);
+      Alert.alert("Erro", "Falha na conexão com o servidor.");
+    }
+  };
+
+  const mostrarFoto = (urlFoto) => {
+    if (!urlFoto) {
+      Alert.alert("Aviso", "Este item não possui link de imagem cadastrado.");
+      return;
+    }
+    Alert.alert("Link da Imagem", urlFoto);
   };
 
   return (
@@ -71,34 +113,60 @@ export default function Movimentacoes({ navigation }) {
 
           <View style={styles.caixaNavbar}>
             <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Text style={styles.navLink}>Voltar</Text>
+              <Text style={styles.navLink}>Voltar para Home</Text>
             </TouchableOpacity>
           </View>
 
-          {/* Seção da Tabela consumindo os dados do MySQL */}
+          {/* Tabela de Estoque Atual */}
           <View style={styles.caixaTabela}>
-            <Text style={styles.tituloTabela}>Estoque </Text>
+            <Text style={styles.tituloTabela}>Estoque Atual</Text>
 
-            <View style={styles.tabelaContainer}>
-              <View style={styles.tabelaHeader}>
-                <Text style={[styles.thText, { flex: 1 }]}>ID</Text>
-                <Text style={[styles.thText, { flex: 2 }]}>Produto</Text>
-                <Text style={[styles.thText, { flex: 1.5 }]}>Qtd</Text>
-                <Text style={[styles.thText, { flex: 3 }]}>Descrição</Text>
-              </View>
-
-              {resultado.map((item, index) => (
-                <View key={index} style={styles.tabelaRow}>
-                  <Text style={[styles.tdTextBold, { flex: 1 }]}>{item.ID}</Text>
-                  <Text style={[styles.tdText, { flex: 2 }]}>{item.Item}</Text>
-                  <Text style={[styles.tdTextBold, { flex: 1.5 }]}>{item.quantidade} un</Text>
-                  <Text style={[styles.tdTextMuted, { flex: 3 }]} numberOfLines={2}>{item.Descricao}</Text>
+            <ScrollView horizontal={true} showsHorizontalScrollIndicator={true}>
+              <View style={styles.tabelaContainer}>
+                
+                <View style={styles.tabelaHeader}>
+                  <Text style={[styles.thText, { width: 50 }]}>ID</Text>
+                  <Text style={[styles.thText, { width: 130 }]}>Produto</Text>
+                  <Text style={[styles.thText, { width: 90 }]}>Quantidade</Text>
+                  <Text style={[styles.thText, { width: 180 }]}>Descrição</Text>
+                  <Text style={[styles.thText, { width: 80 }]}>Preço</Text>
+                  <Text style={[styles.thText, { width: 100 }]}>Estoque Mínimo</Text>
+                  <Text style={[styles.thText, { width: 100 }]}>Categoria</Text>
+                  <Text style={[styles.thText, { width: 80 }]}>Imagem</Text>
                 </View>
-              ))}
-            </View>
+
+                {resultado.map((item, index) => (
+                  <View key={index} style={styles.tabelaRow}>
+                    <Text style={[styles.tdTextBold, { width: 50 }]}>{item.ID}</Text>
+                    <Text style={[styles.tdText, { width: 130 }]} numberOfLines={1}>{item.Item}</Text>
+                    
+                    <View style={{ width: 90, alignItems: 'center' }}>
+                      <View style={styles.badgeContainer}>
+                        <Text style={styles.badgeText}>{item.quantidade} un</Text>
+                      </View>
+                    </View>
+
+                    <Text style={[styles.tdTextMuted, { width: 180 }]} numberOfLines={1}>{item.Descricao}</Text>
+                    <Text style={[styles.tdText, { width: 80 }]}>{Number(item.Preço).toFixed(2)}</Text>
+                    <Text style={[styles.tdText, { width: 100 }]}>{item.estoque_min}</Text>
+                    <Text style={[styles.tdText, { width: 100 }]} numberOfLines={1}>{item.Categoria}</Text>
+                    
+                    <View style={{ width: 80, alignItems: 'center' }}>
+                      <TouchableOpacity 
+                        style={styles.btnFoto} 
+                        onPress={() => mostrarFoto(item.foto)}
+                      >
+                        <Text style={styles.btnFotoTexto}>Foto</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                ))}
+
+              </View>
+            </ScrollView>
           </View>
 
-          {/* Formulário */}
+          {/* Formulário de Lançamento de Movimentação */}
           <View style={[styles.caixaTabela, { marginBottom: 40 }]}>
             <Text style={styles.tituloTabela}>Lançar Movimentação</Text>
 
@@ -109,7 +177,7 @@ export default function Movimentacoes({ navigation }) {
                   style={styles.input}
                   value={produto}
                   onChangeText={setProduto}
-                  placeholder="Digite o nome"
+                  placeholder="Ex: Cabo eletrico"
                   placeholderTextColor="#adb5bd"
                 />
               </View>
@@ -193,7 +261,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   tituloTabela: { color: '#ffffff', fontSize: 24, fontWeight: 'bold', marginBottom: 20 },
-  tabelaContainer: { backgroundColor: '#ffffff', borderRadius: 8, overflow: 'hidden' },
+  tabelaContainer: { backgroundColor: '#ffffff', borderRadius: 8, overflow: 'hidden', minWidth: 900 },
   tabelaHeader: { 
     flexDirection: 'row', 
     backgroundColor: '#f8f9fa', 
@@ -210,11 +278,29 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10, 
     borderBottomWidth: 1, 
     borderBottomColor: '#f1f3f5',
-    alignItems: 'center'
+    alignItems: 'center',
+    backgroundColor: '#ffffff'
   },
   tdText: { color: '#212529', fontSize: 13, textAlign: 'center' },
   tdTextBold: { fontWeight: 'bold', color: '#6c757d', fontSize: 13, textAlign: 'center' },
-  tdTextMuted: { color: '#6c757d', fontSize: 12, textAlign: 'left' },
+  tdTextMuted: { color: '#6c757d', fontSize: 12, textAlign: 'left', paddingLeft: 5 },
+  badgeContainer: {
+    backgroundColor: '#6c757d',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  badgeText: { color: '#ffffff', fontSize: 12, fontWeight: 'bold' },
+  btnFoto: { 
+    backgroundColor: '#0d6efd', 
+    paddingVertical: 6, 
+    paddingHorizontal: 12, 
+    borderRadius: 4,
+    alignItems: 'center'
+  },
+  btnFotoTexto: { color: '#ffffff', fontWeight: 'bold', fontSize: 12 },
   formCard: { backgroundColor: '#ffffff', borderRadius: 8, padding: 20 },
   inputGroup: { marginBottom: 15 },
   label: { fontWeight: 'bold', color: '#6c757d', fontSize: 14, marginBottom: 6 },
@@ -269,5 +355,5 @@ const styles = StyleSheet.create({
     borderRadius: 6, 
     alignItems: 'center' 
   },
-  btnSalvarTexto: { color: '#ffffff', fontWeight: 'bold', fontSize: 13 },
+  btnSalvarTexto: { color: '#ffffff', fontWeight: 'bold', fontSize: 13 }
 });

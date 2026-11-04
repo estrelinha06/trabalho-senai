@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   StyleSheet, 
   Text, 
@@ -10,15 +10,46 @@ import {
   Alert 
 } from 'react-native';
 
-export default function Home({ navigation }) {
-  const resultado = [
-    [1, 'Produto Exemplo 1', 'Eletrônicos', 'Descrição do produto 1', 10, 'R$ 150,00', 'https://via.placeholder.com/150', 5],
-  ];
+const API_URL = "http://10.154.20.69:5000";
 
-  const papel = 'admin'; 
+export default function Home({ route, navigation }) {
+  const [resultado, setResultado] = useState([]);
+  const papel = route.params?.papel || 'usuario';
+  const usuario = route.params?.usuario || 'Convidado';
 
-  const mostrarImagem = (urlImagem) => {
-    Alert.alert("Foto do Produto", `Visualizando imagem de: ${urlImagem}`);
+  useEffect(() => {
+    carregarEstoque();
+  }, []);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      carregarEstoque();
+    });
+    return unsubscribe;
+  }, [navigation]);
+
+  const carregarEstoque = async () => {
+    try {
+      const resposta = await fetch(`${API_URL}/api/estoque`);
+      const dados = await resposta.json();
+      
+      if (resposta.ok && Array.isArray(dados)) {
+        setResultado(dados);
+      } else {
+        console.error("Erro ao carregar estoque:", dados);
+      }
+    } catch (erro) {
+      console.error("Erro de conexão:", erro);
+      Alert.alert("Erro", "Não foi possível conectar ao servidor para carregar o estoque.");
+    }
+  };
+
+  const mostrarFoto = (urlFoto) => {
+    if (!urlFoto) {
+      Alert.alert("Aviso", "Este item não possui link de imagem cadastrado.");
+      return;
+    }
+    Alert.alert("Link da Imagem", urlFoto);
   };
 
   return (
@@ -29,69 +60,97 @@ export default function Home({ navigation }) {
     >
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         
-        {/* Logo do Senai */}
-        <View style={styles.logoContainer}>
+        <View style={styles.headerContainer}>
           <Image 
             source={require('../assets/logo_senai.png')} 
             style={styles.logoSenai}
             resizeMode="contain"
           />
+          
         </View>
 
-        {/* Caixa Navbar */}
-        <View style={styles.caixaNavbar}>
-          <TouchableOpacity onPress={() => navigation?.goBack ? navigation.goBack() : null}>
-            <Text style={styles.navLink}>Voltar</Text>
+        {/* Barra de Navegação */}
+        <View style={styles.navButtonsContainer}>
+          <TouchableOpacity 
+            style={styles.navButton} 
+            onPress={() => navigation.navigate('Movimentacoes')}
+          >
+            <Text style={styles.navButtonText}>Movimentações</Text>
           </TouchableOpacity>
 
-          {/* Botão corrigido para navegar para a tela de Movimentações */}
-          <TouchableOpacity onPress={() => navigation.navigate('Movimentacoes')}>
-            <Text style={styles.navLink}>Movimentações</Text>
+          {/* Botão de Cadastrar Item visível para TODOS */}
+          <TouchableOpacity 
+            style={styles.navButton} 
+            onPress={() => navigation.navigate('CadastrarItem')}
+          >
+            <Text style={styles.navButtonText}>Cadastrar Item</Text>
           </TouchableOpacity>
 
+          {/* Botão de Cadastrar Usuário restrito apenas a admins */}
           {papel === 'admin' && (
-            <TouchableOpacity onPress={() => navigation.navigate('CadastrarUsuario')}>
-              <Text style={styles.navLink}>Cadastrar Usuário</Text>
+            <TouchableOpacity 
+              style={styles.navButton} 
+              onPress={() => navigation.navigate('CadastrarUsuario')}
+            >
+              <Text style={styles.navButtonText}>Cadastrar Usuário</Text>
             </TouchableOpacity>
           )}
+
+          <TouchableOpacity 
+            style={[styles.navButton, { backgroundColor: '#dc3545' }]} 
+            onPress={() => navigation.navigate('Login')}
+          >
+            <Text style={styles.navButtonText}>Sair</Text>
+          </TouchableOpacity>
         </View>
 
-        {/* Caixa Tabela / Conteúdo */}
+        {/* Tabela de Produtos / Estoque Atual */}
         <View style={styles.caixaTabela}>
-          <View style={styles.headerTabelaContainer}>
-            <Text style={styles.tituloTabela}>Últimos Produtos</Text>
-            <TouchableOpacity 
-              style={styles.btnCadastrarNovo} 
-              onPress={() => navigation.navigate('CadastrarItem')}
-              activeOpacity={0.8}
-            >
-              <Text style={styles.btnCadastrarTexto}>Cadastrar Novo Item</Text>
-            </TouchableOpacity>
-          </View>
+          <Text style={styles.tituloTabela}>Últimos Produtos</Text>
 
-          {resultado.map((item, index) => (
-            <View key={index} style={styles.linhaTabela}>
-              <View style={styles.colunaInfo}>
-                <Text style={styles.idProduto}>ID: {item[0]}</Text>
-                <Text style={styles.nomeProduto}>{item[1]}</Text>
-                <Text style={styles.textoDetalhe}><Text style={styles.bold}>Categoria:</Text> {item[2]}</Text>
-                <Text style={styles.textoDetalhe}><Text style={styles.bold}>Descrição:</Text> {item[3]}</Text>
-                <Text style={styles.textoDetalhe}><Text style={styles.bold}>Preço:</Text> {item[5]}</Text>
-                <Text style={styles.textoDetalhe}><Text style={styles.bold}>Estoque Mínimo:</Text> {item[7]}</Text>
-                <View style={styles.badgeContainer}>
-                  <Text style={styles.badgeText}>{item[4]} un</Text>
-                </View>
+          <ScrollView horizontal={true} showsHorizontalScrollIndicator={true}>
+            <View style={styles.tabelaContainer}>
+              
+              <View style={styles.tabelaHeader}>
+                <Text style={[styles.thText, { width: 50 }]}>ID</Text>
+                <Text style={[styles.thText, { width: 130 }]}>Produto</Text>
+                <Text style={[styles.thText, { width: 90 }]}>Quantidade</Text>
+                <Text style={[styles.thText, { width: 180 }]}>Descrição</Text>
+                <Text style={[styles.thText, { width: 80 }]}>Preço</Text>
+                <Text style={[styles.thText, { width: 100 }]}>Estoque Mínimo</Text>
+                <Text style={[styles.thText, { width: 100 }]}>Categoria</Text>
+                <Text style={[styles.thText, { width: 80 }]}>Imagem</Text>
               </View>
 
-              <TouchableOpacity 
-                style={styles.btnFoto} 
-                onPress={() => mostrarImagem(item[6])}
-                activeOpacity={0.8}
-              >
-                <Text style={styles.btnFotoTexto}>Foto</Text>
-              </TouchableOpacity>
+              {resultado.map((item, index) => (
+                <View key={index} style={styles.tabelaRow}>
+                  <Text style={[styles.tdTextBold, { width: 50 }]}>{item.ID}</Text>
+                  <Text style={[styles.tdText, { width: 130 }]} numberOfLines={1}>{item.Item}</Text>
+                  
+                  <View style={{ width: 90, alignItems: 'center' }}>
+                    <View style={styles.badgeContainer}>
+                      <Text style={styles.badgeText}>{item.quantidade} un</Text>
+                    </View>
+                  </View>
+
+                  <Text style={[styles.tdTextMuted, { width: 180 }]} numberOfLines={1}>{item.Descricao}</Text>
+                  <Text style={[styles.tdText, { width: 80 }]}>{Number(item.Preço).toFixed(2)}</Text>
+                  <Text style={[styles.tdText, { width: 100 }]}>{item.estoque_min}</Text>
+                  <Text style={[styles.tdText, { width: 100 }]} numberOfLines={1}>{item.Categoria}</Text>
+                  
+                  <View style={{ width: 80, alignItems: 'center' }}>
+                    <TouchableOpacity 
+                      style={styles.btnFoto} 
+                      onPress={() => mostrarFoto(item.foto)}
+                    >
+                      <Text style={styles.btnFotoTexto}>Foto</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              ))}
+
             </View>
-          ))}
+          </ScrollView>
         </View>
 
       </ScrollView>
@@ -100,79 +159,76 @@ export default function Home({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  bodyHome: { flex: 1, width: '100%', height: '100%' },
+  bodyHome: { flex: 1, width: '100%', height: '100%', backgroundColor: '#f8f9fa' },
   backgroundImage: { resizeMode: 'cover' },
-  scrollContainer: { paddingBottom: 40, paddingTop: 40 },
-  logoContainer: { alignItems: 'center', marginBottom: 10 },
-  logoSenai: { width: 180, height: 45 },
-  caixaNavbar: {
-    marginTop: 10,
-    marginHorizontal: 20,
-    backgroundColor: 'rgb(8, 69, 201)',
-    paddingVertical: 12,
-    paddingHorizontal: 15,
-    borderRadius: 8,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-    elevation: 4,
+  scrollContainer: { paddingBottom: 40, paddingTop: 30 },
+  headerContainer: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20, marginBottom: 15 },
+  logoSenai: { width: 150, height: 40 },
+  userInfo: { alignItems: 'flex-end' },
+  welcomeText: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
+  roleText: { color: '#ddd', fontSize: 13 },
+  navButtonsContainer: { 
+    flexDirection: 'row', 
+    flexWrap: 'wrap', 
+    justifyContent: 'center', 
+    gap: 8, 
+    paddingHorizontal: 20, 
+    marginBottom: 15 
   },
-  navLink: { color: '#ffffff', fontWeight: 'bold', fontSize: 13 },
+  navButton: { 
+    backgroundColor: 'rgb(8, 69, 201)', 
+    paddingVertical: 10, 
+    paddingHorizontal: 12, 
+    borderRadius: 6,
+    marginBottom: 5
+  },
+  navButtonText: { color: '#fff', fontWeight: 'bold', fontSize: 12, textAlign: 'center' },
   caixaTabela: {
     backgroundColor: '#f58427',
-    marginTop: 25,
+    marginTop: 10,
     marginHorizontal: 20,
     padding: 20,
     borderRadius: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 5,
   },
-  headerTabelaContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  tituloTabela: { color: '#ffffff', fontSize: 24, fontWeight: 'bold', marginBottom: 20 },
+  tabelaContainer: { backgroundColor: '#ffffff', borderRadius: 8, overflow: 'hidden', minWidth: 900 },
+  tabelaHeader: { 
+    flexDirection: 'row', 
+    backgroundColor: '#f8f9fa', 
+    paddingVertical: 12, 
+    paddingHorizontal: 10, 
+    borderBottomWidth: 1, 
+    borderBottomColor: '#dee2e6',
+    alignItems: 'center'
+  },
+  thText: { fontWeight: 'bold', color: '#495057', fontSize: 13, textAlign: 'center' },
+  tabelaRow: { 
+    flexDirection: 'row', 
+    paddingVertical: 12, 
+    paddingHorizontal: 10, 
+    borderBottomWidth: 1, 
+    borderBottomColor: '#f1f3f5',
     alignItems: 'center',
-    marginBottom: 20,
-    flexWrap: 'wrap',
-    gap: 10,
+    backgroundColor: '#ffffff'
   },
-  tituloTabela: { color: '#ffffff', fontSize: 22, fontWeight: 'bold' },
-  btnCadastrarNovo: {
-    backgroundColor: '#ffffff',
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    borderRadius: 5,
-  },
-  btnCadastrarTexto: { color: '#000000', fontWeight: 'bold', fontSize: 14 },
-  linhaTabela: {
-    backgroundColor: '#ffffff',
-    padding: 15,
-    borderRadius: 8,
-    marginBottom: 10,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  colunaInfo: { flex: 1, marginRight: 10 },
-  idProduto: { fontWeight: 'bold', color: '#6c757d', fontSize: 12 },
-  nomeProduto: { fontSize: 18, fontWeight: 'bold', color: '#333', marginBottom: 4 },
-  textoDetalhe: { fontSize: 14, color: '#6c757d', marginBottom: 2 },
-  bold: { fontWeight: 'bold' },
+  tdText: { color: '#212529', fontSize: 13, textAlign: 'center' },
+  tdTextBold: { fontWeight: 'bold', color: '#6c757d', fontSize: 13, textAlign: 'center' },
+  tdTextMuted: { color: '#6c757d', fontSize: 12, textAlign: 'left', paddingLeft: 5 },
   badgeContainer: {
     backgroundColor: '#6c757d',
-    alignSelf: 'flex-start',
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 4,
-    marginTop: 5,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   badgeText: { color: '#ffffff', fontSize: 12, fontWeight: 'bold' },
-  btnFoto: { backgroundColor: '#007bff', paddingVertical: 8, paddingHorizontal: 15, borderRadius: 5 },
-  btnFotoTexto: { color: '#ffffff', fontWeight: 'bold', fontSize: 14 },
+  btnFoto: { 
+    backgroundColor: '#0d6efd', 
+    paddingVertical: 6, 
+    paddingHorizontal: 12, 
+    borderRadius: 4,
+    alignItems: 'center'
+  },
+  btnFotoTexto: { color: '#ffffff', fontWeight: 'bold', fontSize: 12 },
 });

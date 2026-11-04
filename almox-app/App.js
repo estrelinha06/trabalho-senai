@@ -16,7 +16,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-// Importação das telas
+// Importação das telas com os nomes exatos dos teus ficheiros
 import Home from './telas/home';
 import CadastrarItem from './telas/cadastrodeitem';
 import CadastrarUsuario from './telas/cadastrodeusuario';
@@ -24,8 +24,7 @@ import Movimentacoes from './telas/movimentacoes';
 
 const Stack = createNativeStackNavigator();
 
-
-const API_URL = "http://10.154.20.15:5000";
+const API_URL = "http://10.154.20.69:5000";
 
 function LoginScreen({ navigation }) {
   const [usuario, setUsuario] = useState('');
@@ -50,7 +49,6 @@ function LoginScreen({ navigation }) {
       const resultado = await resposta.json();
 
       if (resposta.ok) {
-        // Login bem-sucedido! Navega para a Home enviando o papel (admin ou usuario) e o nome
         navigation.navigate('Home', { 
           papel: resultado.papel, 
           usuario: resultado.usuario 
@@ -139,21 +137,9 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
-  background: {
-    flex: 1,
-    justifyContent: 'center',
-    width: '100%',
-    height: '100%',
-  },
-  backgroundImage: {
-    resizeMode: 'cover',
-  },
-  containerKeyboard: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '100%',
-  },
+  background: { flex: 1, justifyContent: 'center', width: '100%', height: '100%' },
+  backgroundImage: { resizeMode: 'cover' },
+  containerKeyboard: { flex: 1, justifyContent: 'center', alignItems: 'center', width: '100%' },
   container: {
     width: '90%',
     maxWidth: 420,
@@ -167,19 +153,8 @@ const styles = StyleSheet.create({
     shadowRadius: 20,
     elevation: 10,
   },
-  title: {
-    fontSize: 36,
-    textAlign: 'center',
-    fontWeight: 'bold',
-    marginBottom: 20,
-    color: '#000',
-  },
-  inputBox: {
-    position: 'relative',
-    width: '100%',
-    height: 50,
-    marginVertical: 15,
-  },
+  title: { fontSize: 36, textAlign: 'center', fontWeight: 'bold', marginBottom: 20, color: '#000' },
+  inputBox: { position: 'relative', width: '100%', height: 50, marginVertical: 15 },
   input: {
     width: '100%',
     height: '100%',
@@ -192,26 +167,10 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
     paddingRight: 45,
   },
-  icon: {
-    position: 'absolute',
-    right: 20,
-    top: 15,
-  },
-  rememberContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginVertical: 10,
-  },
-  switchRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  rememberText: {
-    marginLeft: 8,
-    fontSize: 14,
-    color: '#000',
-  },
+  icon: { position: 'absolute', right: 20, top: 15 },
+  rememberContainer: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginVertical: 10 },
+  switchRow: { flexDirection: 'row', alignItems: 'center' },
+  rememberText: { marginLeft: 8, fontSize: 14, color: '#000' },
   loginButton: {
     width: '100%',
     height: 50,
@@ -226,9 +185,5 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
     elevation: 5,
   },
-  loginButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#000',
-  },
+  loginButtonText: { fontSize: 16, fontWeight: '600', color: '#000' },
 });
